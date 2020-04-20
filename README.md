@@ -2,6 +2,8 @@
 
 *Per quisquilias ad astra* is an arcade game written in Python with asyncio module.
 
+![alt text](https://i.ibb.co/kHwzxG6/async-game.png)
+
 In the game, the player controls a spaceship. The spaceship can move up, down, left and right. Moreover it can shot.
 Along the way some space garbage moving across the screen from top to bottom, which the player must avoid.
 The player can use spaceship's gun to clear the way. If the player's ship is hit by an asteroid, it is exploded and the game is over.
