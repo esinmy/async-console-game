@@ -237,7 +237,7 @@ async def show_year(canvas):
     global year
     year_ticks = int(YEAR_CHANGE_SEC // TIC_TIMEOUT)
     while True:
-        frame = f"{year} " + PHRASES.get(year, "")
+        frame = f"{year} {PHRASES.get(year, '')}"
         row_max_f, col_max_f = get_frame_size(frame)
         row_max, col_max = get_canvas_max_coords(canvas)
         row = row_max - row_max_f
