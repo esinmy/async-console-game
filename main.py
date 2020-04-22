@@ -113,8 +113,8 @@ async def fill_orbit_with_garbage(canvas, col_max, frames):
             await sleep()
             continue
         frame = random.choice(frames)
-        row_max_f, col_max_f = get_frame_size(frame)
-        col = random.randint(BORDER, col_max - col_max_f)
+        height, width = get_frame_size(frame)
+        col = random.randint(BORDER, col_max - width)
         garbage = fly_garbage(canvas, col, frame)
         coroutines.append(garbage)
         await sleep(delay)
@@ -123,13 +123,13 @@ async def fill_orbit_with_garbage(canvas, col_max, frames):
 async def fly_garbage(canvas, column, garbage_frame, speed=0.5):
     """Animate garbage, flying from top to bottom. Сolumn position will stay same, as specified on start."""
     rows_number, columns_number = canvas.getmaxyx()
-    row_max_f, col_max_f = get_frame_size(garbage_frame)
+    height, width = get_frame_size(garbage_frame)
 
     column = max(column, 0)
     column = min(column, columns_number - 1)
 
     row = 0
-    obstacle = Obstacle(0, column, row_max_f, col_max_f)
+    obstacle = Obstacle(0, column, height, width)
     obstacles.append(obstacle)
     try:
         while row < rows_number:
@@ -139,7 +139,7 @@ async def fly_garbage(canvas, column, garbage_frame, speed=0.5):
             row += speed
             obstacle.row = row
             if obstacle in obstacles_in_last_collisions:
-                await explode(canvas, row + row_max_f // 2, column + col_max_f // 2)
+                await explode(canvas, row + height // 2, column + width // 2)
                 obstacles_in_last_collisions.remove(obstacle)
                 break
     finally:
@@ -154,10 +154,10 @@ async def animate_spaceship(frames):
 
 
 async def run_spaceship(canvas, frames):
-    row_max_f, col_max_f = get_frame_size(frames[0])
+    height, width = get_frame_size(frames[0])
     row_max, col_max = get_canvas_max_coords(canvas)
-    row = row_max - row_max_f // 2
-    col = col_max // 2 - col_max_f // 2
+    row = row_max - height // 2
+    col = col_max // 2 - width // 2
     row_speed = col_speed = 0
     cur_frame = None
 
@@ -170,15 +170,15 @@ async def run_spaceship(canvas, frames):
         row_change, col_change, shot_made = read_controls(canvas)
 
         if shot_made and year >= YEAR_GUN_ON:
-            fire = animate_fire(canvas, row, col + col_max_f // 2)
+            fire = animate_fire(canvas, row, col + width // 2)
             coroutines.append(fire)
 
         row_speed, col_speed = update_speed(row_speed, col_speed, row_change, col_change)
 
         row += row_speed
         col += col_speed
-        row = min(row, row_max - row_max_f)
-        col = min(col, col_max - col_max_f)
+        row = min(row, row_max - height)
+        col = min(col, col_max - width)
         row = max(row, BORDER)
         col = max(col, BORDER)
 
@@ -224,10 +224,10 @@ async def animate_fire(canvas, start_row, start_column, rows_speed=-0.3, columns
 
 async def show_gameover(canvas):
     frame = read_text_file(GAMEOVER_FRAME)
-    row_max_f, col_max_f = get_frame_size(frame)
+    height, width = get_frame_size(frame)
     row_max, col_max = get_canvas_max_coords(canvas)
-    row = row_max // 2 - row_max_f // 2
-    col = col_max // 2 - col_max_f // 2
+    row = row_max // 2 - height // 2
+    col = col_max // 2 - width // 2
     while True:
         draw_frame(canvas, row, col, frame)
         await sleep()
@@ -238,10 +238,10 @@ async def show_year(canvas):
     year_ticks = int(YEAR_CHANGE_SEC // TIC_TIMEOUT)
     while True:
         frame = f"{year} {PHRASES.get(year, '')}"
-        row_max_f, col_max_f = get_frame_size(frame)
+        height, width = get_frame_size(frame)
         row_max, col_max = get_canvas_max_coords(canvas)
-        row = row_max - row_max_f
-        col = col_max // 2 - col_max_f // 2
+        row = row_max - height
+        col = col_max // 2 - width // 2
         draw_frame(canvas, row, col, frame)
         await sleep(year_ticks)
         draw_frame(canvas, row, col, frame, negative=True)
