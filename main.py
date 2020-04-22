@@ -272,15 +272,15 @@ def draw(canvas):
 
 def run_event_loop(coroutines, *canvases):
     while True:
-        try:
-            for coroutine in coroutines.copy():
+        for coroutine in coroutines.copy():
+            try:
                 coroutine.send(None)
-            for canvas in canvases:
-                canvas.border()
-                canvas.refresh()
-            time.sleep(TIC_TIMEOUT)
-        except StopIteration:
-            coroutines.remove(coroutine)
+            except StopIteration:
+                coroutines.remove(coroutine)
+        for canvas in canvases:
+            canvas.border()
+            canvas.refresh()
+        time.sleep(TIC_TIMEOUT)
 
 
 if __name__ == '__main__':
